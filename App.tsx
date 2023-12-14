@@ -1,8 +1,9 @@
-import React, {useCallback, useMemo, useEffect} from 'react';
+import React, {useCallback, useMemo, useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
 import NfcManager, {NfcTech} from 'react-native-nfc-manager';
 
 function App() {
+  const [nfcTag, setNfcTag] = useState<any>({});
   // Initialize NFCManager when the component mounts
   useEffect(() => {
     NfcManager.start();
@@ -19,6 +20,7 @@ function App() {
       await NfcManager.requestTechnology(NfcTech.Ndef);
       // Get the tag information
       const tag = await NfcManager.getTag();
+      setNfcTag(JSON.stringify(tag));
       console.warn('Tag found', tag);
     } catch (ex) {
       console.warn('Error reading NFC tag', ex);
@@ -48,6 +50,7 @@ function App() {
     <View style={styles.wrapper}>
       <TouchableOpacity onPress={readNdef}>
         <Text>Scan a Tag</Text>
+        {nfcTag && <Text> NFC Tag: {nfcTag}</Text>}
       </TouchableOpacity>
     </View>
   );
